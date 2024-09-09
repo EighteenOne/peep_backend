@@ -25,9 +25,10 @@ logger.addHandler(stream_handler)
 app = FastAPI(
     debug=bool(settings.DEBUG),
     title=settings.TITLE,
-    # root_path="/api/v1",
-    docs_url='/docs',
-    openapi_url='/openapi.json',
+    version="1",
+    root_path="/test/",
+    # docs_url='/docs',
+    # openapi_url='/openapi.json',
 )
 
 
