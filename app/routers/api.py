@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Depends
 
 from app.auth.auth import check_api_key
-from app.routers.v1 import session
+from app.routers.v1 import session, root
 
 router = APIRouter(
-    prefix="/api/v1"
+    prefix="/api/v1",
+    dependencies=[Depends(check_api_key)]
 )
 
 router.include_router(
     session.router,
-    dependencies=[Depends(check_api_key)]
+)
+router.include_router(
+    root.router,
 )
