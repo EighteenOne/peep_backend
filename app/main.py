@@ -1,9 +1,8 @@
 import logging
 import sys
-from urllib.request import Request
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.middleware.cors import CORSMiddleware
 
