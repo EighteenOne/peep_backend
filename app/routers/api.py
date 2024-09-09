@@ -4,7 +4,7 @@ from app.auth.auth import check_api_key
 from app.routers.v1 import session
 
 router = APIRouter(
-    prefix="/api/v1"
+    prefix="/v1"
 )
 
 router.include_router(
