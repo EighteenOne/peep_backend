@@ -26,7 +26,7 @@ app = FastAPI(
     debug=bool(settings.DEBUG),
     title=settings.TITLE,
     version="1",
-    root_path="/test/",
+    root_path="/test",
     # docs_url='/docs',
     # openapi_url='/openapi.json',
 )
