@@ -1,8 +1,10 @@
 import logging
 import sys
+from urllib.request import Request
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.middleware.cors import CORSMiddleware
 
 from app.config.settings import settings
@@ -25,10 +27,17 @@ logger.addHandler(stream_handler)
 app = FastAPI(
     debug=bool(settings.DEBUG),
     title=settings.TITLE,
-    root_path="/test",
-    docs_url='/docs',
-    openapi_url='/openapi.json',
 )
+
+
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html(req: Request):
+    root_path = req.scope.get("root_path", "").rstrip("/")
+    openapi_url = root_path + app.openapi_url
+    return get_swagger_ui_html(
+        openapi_url=openapi_url,
+        title="API",
+    )
 
 
 @app.on_event("startup")
