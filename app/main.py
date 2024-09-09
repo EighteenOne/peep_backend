@@ -25,7 +25,7 @@ logger.addHandler(stream_handler)
 app = FastAPI(
     debug=bool(settings.DEBUG),
     title=settings.TITLE,
-    root_path="/api/",
+    root_path="/api/v1",
 )
 
 
