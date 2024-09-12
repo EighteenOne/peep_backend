@@ -43,8 +43,8 @@ async def custom_swagger_ui_html(req: Request):
 @app.on_event("startup")
 def on_startup() -> None:
     # create_tables()
-    # create_template()
-    # create_point()
+    create_template()
+    create_point()
     return
 
 
