@@ -31,7 +31,7 @@ def update_uploaded_count_photos(logger: Logger) -> None:
         try:
             actual_count = yandex_disk_client.get_count_files(path)
         except YadiskException as exc:
-            logger.info(f"[{log_task_name}][{log_session}] Got yandex disk api exception: {exc}")
+            logger.info(f"[{log_task_name}][{log_session}] Got yandex disk api exception for path {path}: {exc}")
             continue
 
         logger.info(f"[{log_task_name}][{log_session}] Found {actual_count}/{peep_session.count_photos} files at disk")
