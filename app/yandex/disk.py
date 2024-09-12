@@ -1,6 +1,7 @@
 import logging
 
 import yadisk
+from yadisk.exceptions import PathNotFoundError, ForbiddenError, WrongResourceTypeError
 
 from app.config.settings import settings
 
@@ -22,13 +23,13 @@ class YandexDiskClient:
         return meta.public_url
 
     def get_count_files(self, path: str) -> int:
+        rv = 0
         try:
             ld = self.client.listdir(path)
-        except yadisk.exceptions.PathNotFoundError as exc:
+            rv = len(list(ld))
+        except (PathNotFoundError, ForbiddenError, WrongResourceTypeError) as exc:
             logger.error("Yandex disk api error:", exc)
-            return 0
-
-        return len(list(ld))
+        return rv
 
 
 yandex_disk_client = YandexDiskClient(settings.YANDEX_DISK_TOKEN)
