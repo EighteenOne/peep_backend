@@ -8,7 +8,7 @@ from app.schemas.points import PointInput
 from app.schemas.templates import TemplateInput
 from app.services.sessions import SessionService
 from app.services.templates import TemplateService
-from app.yandex.disk import yandex_disk_client
+from app.yandex.disk import yandex_disk_client, YadiskException
 
 
 def update_uploaded_count_photos(logger: Logger) -> None:
@@ -28,7 +28,11 @@ def update_uploaded_count_photos(logger: Logger) -> None:
         logger.info(f"[{log_task_name}][{log_session}] Processing session")
 
         path = peep_session.get_path()
-        actual_count = yandex_disk_client.get_count_files(path)
+        try:
+            actual_count = yandex_disk_client.get_count_files(path)
+        except YadiskException as exc:
+            logger.error(f"[{log_task_name}][{log_session}] Got yandex disk api exception: {exc}")
+            continue
 
         logger.info(f"[{log_task_name}][{log_session}] Found {actual_count}/{peep_session.count_photos} files at disk")
 

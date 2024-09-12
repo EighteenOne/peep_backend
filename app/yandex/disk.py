@@ -8,6 +8,10 @@ from app.config.settings import settings
 logger = logging.getLogger(__name__)
 
 
+class YadiskException(Exception):
+    pass
+
+
 class YandexDiskClient:
 
     def __init__(self, token):
@@ -23,13 +27,12 @@ class YandexDiskClient:
         return meta.public_url
 
     def get_count_files(self, path: str) -> int:
-        rv = 0
         try:
             ld = self.client.listdir(path)
-            rv = len(list(ld))
         except (PathNotFoundError, ForbiddenError, WrongResourceTypeError) as exc:
-            logger.error("Yandex disk api error:", exc)
-        return rv
+            raise YadiskException(exc)
+
+        return len(list(ld))
 
 
 yandex_disk_client = YandexDiskClient(settings.YANDEX_DISK_TOKEN)
