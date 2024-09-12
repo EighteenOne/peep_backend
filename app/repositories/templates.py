@@ -11,7 +11,7 @@ class TemplateRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create(self, data: TemplateInput):
+    def create(self, data: TemplateInput) -> Template:
         template = Template(**data.model_dump(exclude_none=True))
         self.db.add(template)
         self.db.commit()

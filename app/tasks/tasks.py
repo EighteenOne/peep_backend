@@ -12,28 +12,31 @@ from app.yandex.disk import yandex_disk_client
 
 
 def update_uploaded_count_photos(logger: Logger) -> None:
-    logger.info("Started task update_uploaded_count_photos")
+    log_task_name = "update_uploaded_count_photos"
+
+    logger.info(f"[{log_task_name}] Started task")
 
     db = SessionLocal()
 
     session_service = SessionService(db)
     new_sessions = session_service.get_by_status(0)
-    logger.info(f"Found {len(new_sessions)} sessions with status {0}")
+    logger.info(f"[{log_task_name}] Found {len(new_sessions)} sessions with status {0}")
 
     for peep_session in new_sessions:
+        log_session = peep_session.session
 
-        logger.info(f"Processing session {peep_session.session}")
+        logger.info(f"[{log_task_name}][{log_session}] Processing session")
 
         path = peep_session.get_path()
         actual_count = yandex_disk_client.get_count_files(path)
 
-        logger.info(f"Found {actual_count}/{peep_session.count_photos} files at disk")
+        logger.info(f"[{log_task_name}][{log_session}] Found {actual_count}/{peep_session.count_photos} files at disk")
 
         if actual_count == peep_session.count_photos:
             yandex_disk_client.publish(path)
             public_link = yandex_disk_client.get_public_link(path)
 
-            logger.info(f"Got public link {public_link}")
+            logger.info(f"[{log_task_name}][{log_session}] Got public link {public_link}")
 
             peep_session.status = 1
             peep_session.public_link = public_link
@@ -44,24 +47,28 @@ def update_uploaded_count_photos(logger: Logger) -> None:
         session_service.update(peep_session)
 
     db.close()
-    logger.info(f"Task update_uploaded_count_photos finished, db conn closed")
+    logger.info(f"[{log_task_name}] Task finished, db conn closed")
 
 
 def send_emails(logger: Logger) -> None:
-    logger.info("Started task send_emails")
+    log_task_name = "send_emails"
+
+    logger.info(f"[{log_task_name}] Started task")
     db = SessionLocal()
     session_service = SessionService(db)
     template_service = TemplateService(db)
 
     new_sessions = session_service.get_by_status(1)
-    logger.info(f"Found {len(new_sessions)} sessions with status {1}")
+    logger.info(f"[{log_task_name}] Found {len(new_sessions)} sessions with status {1}")
 
     for peep_session in new_sessions:
+        log_session = peep_session.session
+        logger.info(f"[{log_task_name}][{log_session}] Processing session")
 
-        logger.info(f"Processing session {peep_session.session}")
-
-        # TODO: check if exists
         template = template_service.get_by_point(peep_session.point)
+        if template is None:
+            logger.error(f"[{log_task_name}][{log_session}] Template not found for point {peep_session.point}")
+            continue
 
         msg = template.template_text
         msg = msg.replace("[Имя]", peep_session.name)
@@ -70,14 +77,15 @@ def send_emails(logger: Logger) -> None:
         try:
             email_service.send_mail(msg, template.subject, peep_session.email)
         except Exception as exc:
-            logger.error(exc)
+            logger.error(f"[{log_task_name}][{log_session}] Send email error", exc)
+            continue
 
         peep_session.status = 2
         peep_session.sent_at = datetime.datetime.now()
         session_service.update(peep_session)
 
     db.close()
-    logger.info(f"Task send_emails finished, db conn closed")
+    logger.info(f"[{log_task_name}] Task finished, db conn closed")
 
 
 def create_point():

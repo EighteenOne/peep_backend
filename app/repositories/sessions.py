@@ -11,7 +11,7 @@ class SessionRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create(self, data: SessionInput) -> Type[PeepSession]:
+    def create(self, data: SessionInput) -> PeepSession:
         session = PeepSession(**data.model_dump(exclude_none=True))
         self.db.add(session)
         self.db.commit()

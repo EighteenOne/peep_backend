@@ -14,12 +14,10 @@ from app.config.database import SessionLocal
 from app.repositories.points import PointRepository
 from app.services.templates import TemplateService
 
-# Enable logging
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
-# set higher logging level for httpx to avoid all GET and POST requests being logged
-# logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
@@ -29,10 +27,8 @@ choosing_reply_keyboard = [["Шаблон", "Статистика"], ["Смен�
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Starts the conversation and asks the user about their gender."""
-
     await update.message.reply_text(
-        "Привет! Я Peep-бот, введи название точки, к которой хочешь подключиться?",
+        "Привет! Я Peep-бот, введи название точки, к которой хочешь подключиться",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -40,10 +36,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def start_from_any_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Starts the conversation and asks the user about their gender."""
-
     await update.message.reply_text(
-        "Привет! Я Peep-бот, введи название точки, к которой хочешь подключиться?",
+        "Привет! Я Peep-бот, введи название точки, к которой хочешь подключиться",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -51,7 +45,6 @@ async def start_from_any_text(update: Update, context: ContextTypes.DEFAULT_TYPE
 
 
 async def auth_login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Starts the conversation and asks the user about their gender."""
     text = update.message.text
     context.user_data["point"] = text
 
@@ -64,8 +57,6 @@ async def auth_login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def auth_pass(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Starts the conversation and asks the user about their gender."""
-
     text = update.message.text
     context.user_data["pass"] = text
 
@@ -94,7 +85,6 @@ async def auth_pass(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 async def change_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Starts the conversation and asks the user about their gender."""
     del context.user_data["point"]
     del context.user_data["pass"]
 
@@ -107,10 +97,6 @@ async def change_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
 
 async def template_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Stores the selected gender and asks for a photo."""
-    user = update.message.from_user
-    # logger.info("Gender of %s: %s", user.first_name, update.message.text)
-
     point = context.user_data["point"]
     db = SessionLocal()
     template_service = TemplateService(db)
@@ -134,10 +120,6 @@ async def template_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 async def change_template(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Skips the photo and asks for a location."""
-    user = update.message.from_user
-    # logger.info("User %s did not send a photo.", user.first_name)
-
     point = context.user_data["point"]
 
     db = SessionLocal()
@@ -165,11 +147,8 @@ async def change_template(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 async def stat_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Stores the selected gender and asks for a photo."""
-    user = update.message.from_user
-    # logger.info("Gender of %s: %s", user.first_name, update.message.text)
     await update.message.reply_text(
-        "Этот раздел еще в разработке =)",
+        "Этот раздел еще в разработке",
         reply_markup=ReplyKeyboardMarkup(
             choosing_reply_keyboard, one_time_keyboard=True
         ),
@@ -180,8 +159,6 @@ async def stat_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Cancels and ends the conversation."""
-    user = update.message.from_user
-    # logger.info("Галя, у нас отмена!", user.first_name)
     await update.message.reply_text(
         "Галя, у нас отмена!", reply_markup=ReplyKeyboardMarkup(
             choosing_reply_keyboard, one_time_keyboard=True
@@ -193,10 +170,8 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 def main() -> None:
     """Run the bot."""
-    # Create the Application and pass it your bot's token.
     application = Application.builder().token("918267557:AAHH3dRmP2Mr6WLbFl-geGVYfXpVn3KaoSc").build()
 
-    # Add conversation handler with the states GENDER, PHOTO, LOCATION and BIO
     conv_handler = ConversationHandler(
         entry_points=[
             CommandHandler("start", start),
@@ -222,7 +197,6 @@ def main() -> None:
 
     application.add_handler(conv_handler)
 
-    # Run the bot until the user presses Ctrl-C
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 

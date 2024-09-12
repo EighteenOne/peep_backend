@@ -1,6 +1,10 @@
+import logging
+
 import yadisk
 
 from app.config.settings import settings
+
+logger = logging.getLogger(__name__)
 
 
 class YandexDiskClient:
@@ -18,8 +22,12 @@ class YandexDiskClient:
         return meta.public_url
 
     def get_count_files(self, path: str) -> int:
-        # TODO except yadisk.exceptions.PathNotFoundError:
-        ld = self.client.listdir(path)
+        try:
+            ld = self.client.listdir(path)
+        except yadisk.exceptions.PathNotFoundError as exc:
+            logger.error("Yandex disk api error:", exc)
+            return 0
+
         return len(list(ld))
 
 

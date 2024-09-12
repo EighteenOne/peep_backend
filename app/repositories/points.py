@@ -1,11 +1,9 @@
-from typing import List, Type
+from typing import Type
 
 from sqlalchemy.orm import Session
 
 from app.models.points import Point
-from app.models.templates import Template
 from app.schemas.points import PointInput
-from app.schemas.templates import TemplateInput
 
 
 class PointRepository:
