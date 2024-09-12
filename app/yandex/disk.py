@@ -27,12 +27,14 @@ class YandexDiskClient:
         return meta.public_url
 
     def get_count_files(self, path: str) -> int:
+        rv = 0
         try:
             ld = self.client.listdir(path)
+            rv = len(list(ld))
         except (PathNotFoundError, ForbiddenError, WrongResourceTypeError) as exc:
             raise YadiskException(exc)
 
-        return len(list(ld))
+        return rv
 
 
 yandex_disk_client = YandexDiskClient(settings.YANDEX_DISK_TOKEN)
