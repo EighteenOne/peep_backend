@@ -18,8 +18,8 @@ class SessionRepository:
         self.db.refresh(session)
         return session
 
-    def exists_by_name(self, name: str) -> bool:
-        session = self.db.query(PeepSession).filter_by(name=name).first()
+    def exists_by_name(self, session: str) -> bool:
+        session = self.db.query(PeepSession).filter_by(session=session).first()
         return bool(session)
 
     # def get_by_status(self, status: int) -> List[SessionOutput]:

@@ -14,7 +14,7 @@ class SessionService:
         self.repository = SessionRepository(db)
 
     def create(self, data: SessionInput) -> str:
-        if self.repository.exists_by_name(data.name):
+        if self.repository.exists_by_name(data.session):
             raise HTTPException(status_code=400, detail="Session already exists")
         session = self.repository.create(data)
         return session.id

@@ -24,4 +24,4 @@ class PeepSession(Base):
     sent_at = Column(DateTime)
 
     def get_path(self):
-        return f"Peep/{self.point}/{self.session}"
+        return f"{self.point}/{self.session}"
