@@ -36,7 +36,7 @@ def update_uploaded_count_photos(logger: Logger) -> None:
 
         logger.info(f"[{log_task_name}][{log_session}] Found {actual_count}/{peep_session.count_photos} files at disk")
 
-        if actual_count == peep_session.count_photos:
+        if actual_count >= peep_session.count_photos:
             yandex_disk_client.publish(path)
             public_link = yandex_disk_client.get_public_link(path)
 
