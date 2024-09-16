@@ -17,7 +17,7 @@ router = APIRouter(
 
 @router.post("", status_code=201)
 def create_session(
-        data: Annotated[SessionInput, Depends()], db_session: Session = Depends(get_db)
+        data: SessionInput, db_session: Session = Depends(get_db)
 ):
     _service = SessionService(db_session)
     rv = _service.create(data)
