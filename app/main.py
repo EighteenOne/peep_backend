@@ -1,5 +1,6 @@
 import logging
 import sys
+from os import path
 
 import sentry_sdk
 import uvicorn
@@ -25,7 +26,8 @@ from app.tasks import tasks
 # stream_handler.setFormatter(log_formatter)
 # logger.addHandler(stream_handler)
 
-logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
+log_file_path = path.join(path.dirname(path.abspath(__file__)), 'logging.conf')
+logging.config.fileConfig(log_file_path, disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
 
 sentry_sdk.init(
