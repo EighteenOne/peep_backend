@@ -20,5 +20,8 @@ sentry_router = APIRouter(
 async def sentry_handler(
         request: Request
 ):
-    logger.info(await request.json())
+    payload = await request.json()
+    # payload = await request.json()
+    logger.info(payload)
+    print(payload)
     return "ok"
