@@ -1,6 +1,8 @@
 import datetime
 from logging import Logger
 
+import pytz
+
 from app.config.database import SessionLocal
 from app.notification.email import email_service
 from app.repositories.points import PointRepository
@@ -9,6 +11,8 @@ from app.schemas.templates import TemplateInput
 from app.services.sessions import SessionService
 from app.services.templates import TemplateService
 from app.yandex.disk import yandex_disk_client, YadiskException
+
+moscow_tz = pytz.timezone('Europe/Moscow')
 
 
 def update_uploaded_count_photos(logger: Logger) -> None:
@@ -85,7 +89,7 @@ def send_emails(logger: Logger) -> None:
             continue
 
         peep_session.status = 2
-        peep_session.sent_at = datetime.datetime.now()
+        peep_session.sent_at = datetime.datetime.now(moscow_tz)
         session_service.update(peep_session)
 
     db.close()
