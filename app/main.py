@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from app.config.settings import settings
 from app.routers.api import router
+from app.routers.sentry_webhook import sentry_router
 from app.tasks.tasks import create_template, create_point
 from app.utils.init_db import create_tables
 from app.config.database import get_db
@@ -95,6 +96,7 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(sentry_router)
 
 if __name__ == "__main__":
     uvicorn.run(app="app.main:app", reload=True)
