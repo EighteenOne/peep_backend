@@ -17,8 +17,8 @@ sentry_router = APIRouter(
 
 
 @sentry_router.post("", status_code=200)
-def sentry_handler(
+async def sentry_handler(
         request: Request
 ):
-    logger.info(request.json())
+    logger.info(await request.json())
     return "ok"
