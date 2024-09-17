@@ -12,7 +12,7 @@ from telegram.ext import (
 
 from app.config.database import SessionLocal
 from app.repositories.points import PointRepository
-from app.services.templates import TemplateService
+from app.services.template import TemplateService
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO

@@ -1,11 +1,11 @@
 import logging
-from typing import Annotated
 
-from app.schemas.sessions import SessionInput
-from app.services.sessions import SessionService
-from app.config.database import get_db
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+
+from app.config.database import get_db
+from app.schemas.sessions import SessionInput
+from app.services.session import SessionService
 
 logger = logging.getLogger(__name__)
 

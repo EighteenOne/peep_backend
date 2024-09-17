@@ -21,3 +21,7 @@ class PointRepository:
     def get_by_point(self, point: str) -> Type[Point]:
         point = self.db.query(Point).filter_by(point=point).first()
         return point
+
+    def exists_by_name(self, point: str) -> bool:
+        point = self.db.query(Point).filter_by(point=point).first()
+        return bool(point)

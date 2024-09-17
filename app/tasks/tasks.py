@@ -8,8 +8,8 @@ from app.notification.email import email_service
 from app.repositories.points import PointRepository
 from app.schemas.points import PointInput
 from app.schemas.templates import TemplateInput
-from app.services.sessions import SessionService
-from app.services.templates import TemplateService
+from app.services.session import SessionService
+from app.services.template import TemplateService
 from app.yandex.disk import yandex_disk_client, YadiskException
 
 moscow_tz = pytz.timezone('Europe/Moscow')
