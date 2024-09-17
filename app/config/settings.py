@@ -24,5 +24,7 @@ class Settings(BaseSettings):
     FROM_PASSWD: str = os.getenv("FROM_PASSWD")
     SERVER_ADR: str = os.getenv("SERVER_ADR")
 
+    SENTRY_DSN: str = os.getenv("SENTRY_DSN")
+
 
 settings = Settings()
