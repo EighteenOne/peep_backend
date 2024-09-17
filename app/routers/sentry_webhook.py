@@ -1,7 +1,6 @@
 import logging
 
-from fastapi import APIRouter, Depends
-from requests import Request
+from fastapi import APIRouter, Request
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db
