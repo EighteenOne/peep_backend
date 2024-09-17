@@ -20,8 +20,12 @@ sentry_router = APIRouter(
 async def sentry_handler(
         request: Request
 ):
+    logger.info("sentry-webhook")
     payload = await request.json()
+    body = await request.body()
+    params = request.query_params
     # payload = await request.json()
-    logger.info(payload)
-    print(payload)
+    logger.info("payload", payload)
+    logger.info("body", body)
+    logger.info("qp", params)
     return "ok"
