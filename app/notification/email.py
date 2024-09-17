@@ -28,7 +28,7 @@ class EmailService:
 
         smtp = smtplib.SMTP(self.server_adr, 587)
         smtp.starttls()
-        # smtp.ehlo()
+        smtp.ehlo()
         smtp.login(self.from_mail, self.from_passwd)
         smtp.sendmail(self.from_mail, to, msg.as_string())
         smtp.quit()
