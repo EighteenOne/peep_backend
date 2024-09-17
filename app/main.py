@@ -17,13 +17,16 @@ from app.config.database import get_db
 from fastapi_utils.tasks import repeat_every
 from app.tasks import tasks
 
+# logger = logging.getLogger(__name__)
+# logger.setLevel(logging.INFO)
+# stream_handler = logging.StreamHandler(sys.stdout)
+# log_formatter = logging.Formatter(
+#     "%(asctime)s [%(levelname)s]: %(message)s")
+# stream_handler.setFormatter(log_formatter)
+# logger.addHandler(stream_handler)
+
+logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-stream_handler = logging.StreamHandler(sys.stdout)
-log_formatter = logging.Formatter(
-    "%(asctime)s [%(levelname)s]: %(message)s")
-stream_handler.setFormatter(log_formatter)
-logger.addHandler(stream_handler)
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
