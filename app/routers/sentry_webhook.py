@@ -22,10 +22,10 @@ async def sentry_handler(
 ):
     logger.info("sentry-webhook")
     payload = await request.json()
-    body = await request.body()
-    params = request.query_params
+    # body = await request.body()
+    # params = request.query_params
     # payload = await request.json()
-    logger.info("payload", payload)
-    logger.info("body", body)
-    logger.info("qp", params)
+    logger.info(f"payload: {payload}")
+    # logger.info("body", body)
+    # logger.info("qp", params)
     return "ok"
