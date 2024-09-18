@@ -23,11 +23,11 @@ async def sentry_handler(
 
     tg_msg = f'<b>[{payload["project_name"]}]</b> <code>{payload["culprit"]} \n {payload["message"]}</code><pre>{payload["url"]}</pre>\n'
 
-    send_message_to_chat(tg_msg)
+    await send_message_to_chat(tg_msg)
 
     return "ok"
 
 
-def send_message_to_chat(msg: str):
+async def send_message_to_chat(msg: str):
     bot = telegram.Bot(token=settings.BOT_TOKEN)
-    bot.send_message(chat_id=CHAT_ID, text=msg, parse_mode="html")
+    await bot.send_message(chat_id=CHAT_ID, text=msg, parse_mode="html")
