@@ -23,7 +23,17 @@ async def sentry_handler(
 
     logger.info(payload)
 
-    tg_msg = f'<b>[{payload["project_name"]}]</b>\n<code>{payload["culprit"]}</code>\n<pre>{payload["message"]}</pre>\n\n{payload["url"]}'
+    tg_msg = f'<b>[{payload["project_name"]}]</b>\n<code>{payload["culprit"]}</code>\n\n'
+
+    if payload["message"]:
+        tg_msg += f'message: \n<pre>{payload["message"]}</pre>\n\n'
+
+    if payload["exception"] and len(payload["exception"]["values"]) > 0:
+        t, v = payload["exception"]["values"][0]["type"], payload["exception"]["values"][0]["value"]
+        tg_msg += f'exception: \n<pre>{t}\n{v}</pre>\n\n'
+
+    if payload["url"]:
+        tg_msg += f'{payload["url"]}'
 
     await send_message_to_chat(tg_msg)
 
