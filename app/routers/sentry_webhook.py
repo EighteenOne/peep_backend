@@ -26,8 +26,9 @@ async def sentry_handler(
     if payload["message"]:
         tg_msg += f'message: \n<pre>{payload["message"]}</pre>\n\n'
 
-    if payload["exception"] and len(payload["exception"]["values"]) > 0:
-        t, v = payload["exception"]["values"][0]["type"], payload["exception"]["values"][0]["value"]
+    event_payload = payload["event"]
+    if event_payload["exception"] and len(event_payload["exception"]["values"]) > 0:
+        t, v = event_payload["exception"]["values"][0]["type"], event_payload["exception"]["values"][0]["value"]
         tg_msg += f'exception: \n<pre>{t}\n{v}</pre>\n\n'
 
     if payload["url"]:
