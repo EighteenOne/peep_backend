@@ -89,7 +89,7 @@ async def change_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     del context.user_data["pass"]
 
     await update.message.reply_text(
-        "Введи название точки, к которой хочешь подключиться?",
+        "Введи название точки, к которой хочешь подключиться",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -106,7 +106,13 @@ async def template_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     await update.message.reply_text(
         "Просто пришли мне полный текст нового щаблона и я сохраню его\n"
         "Чтобы подставить имя в нужное место, напиши [Имя], а для ссылки с фото [Ссылка]\n"
-        "Если хочешь отменить редактирование, отправь команду /cancel",
+        "Для удобства я пришлю текущий шаблон отдельным сообщением\n"
+        "А если хочешь отменить редактирование, отправь команду /cancel",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+
+    await update.message.reply_text(
+        "Текущий шаблон:",
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -130,7 +136,7 @@ async def change_template(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     db.close()
 
     await update.message.reply_text(
-        "Отлично, я сохранил шаблон!",
+        "Отлично, я сохранил изменения!",
         reply_markup=ReplyKeyboardMarkup(
             choosing_reply_keyboard, one_time_keyboard=True
         ),
