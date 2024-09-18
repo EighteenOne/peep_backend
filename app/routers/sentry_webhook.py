@@ -21,7 +21,7 @@ async def sentry_handler(
 ):
     payload = await request.json()
 
-    tg_msg = f'<b>[{payload["project_name"]}]</b> <code>{payload["culprit"]} \n {payload["message"]}</code><pre>{payload["url"]}</pre>\n'
+    tg_msg = f'<b>[{payload["project_name"]}]</b> \n <code>{payload["culprit"]} \n {payload["message"]}</code> \n {payload["url"]} \n'
 
     await send_message_to_chat(tg_msg)
 
