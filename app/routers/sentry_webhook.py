@@ -21,8 +21,6 @@ async def sentry_handler(
 ):
     payload = await request.json()
 
-    logger.info(payload)
-
     tg_msg = f'<b>[{payload["project_name"]}]</b>\n<code>{payload["culprit"]}</code>\n\n'
 
     if payload["message"]:
