@@ -11,8 +11,22 @@ from telegram.ext import (
 )
 
 from app.config.database import SessionLocal
+from app.config.settings import settings
 from app.repositories.points import PointRepository
 from app.services.template import TemplateService
+
+import sentry_sdk
+
+sentry_sdk.init(
+    dsn=settings.SENTRY_DSN,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -176,8 +190,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 def main() -> None:
-    """Run the bot."""
-    application = Application.builder().token("918267557:AAHH3dRmP2Mr6WLbFl-geGVYfXpVn3KaoSc").build()
+    application = Application.builder().token(settings.BOT_TOKEN).build()
 
     conv_handler = ConversationHandler(
         entry_points=[
