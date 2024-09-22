@@ -35,6 +35,8 @@ def update_uploaded_count_photos(logger: Logger) -> None:
         try:
             actual_count = yandex_disk_client.get_count_files(path)
         except YadiskException as exc:
+            peep_session.status = -1
+            session_service.update(peep_session)
             logger.error(f"[{log_task_name}][{log_session}] Got yandex disk api exception for path {path}: {exc}")
             continue
 
@@ -85,6 +87,8 @@ def send_emails(logger: Logger) -> None:
         try:
             email_service.send_mail(msg, template.subject, peep_session.email)
         except Exception as exc:
+            peep_session.status = -1
+            session_service.update(peep_session)
             logger.error(f"[{log_task_name}][{log_session}] Send email error", exc)
             continue
 
