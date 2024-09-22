@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     SENTRY_DSN: str = os.getenv("SENTRY_DSN")
 
     BOT_TOKEN: str = os.getenv("BOT_TOKEN")
+    SENTRY_BOT_TOKEN: str = os.getenv("SENTRY_BOT_TOKEN")
 
 
 settings = Settings()

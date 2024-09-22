@@ -40,5 +40,5 @@ async def sentry_handler(
 
 
 async def send_message_to_chat(msg: str):
-    bot = telegram.Bot(token=settings.BOT_TOKEN)
+    bot = telegram.Bot(token=settings.SENTRY_BOT_TOKEN)
     await bot.send_message(chat_id=CHAT_ID, text=msg, parse_mode="html")
