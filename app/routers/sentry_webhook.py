@@ -23,15 +23,15 @@ async def sentry_handler(
 
     tg_msg = f'<b>[{payload["project_name"]}]</b>\n<code>{payload["culprit"]}</code>\n\n'
 
-    if payload["message"]:
+    if "message" in payload:
         tg_msg += f'message: \n<pre>{payload["message"]}</pre>\n\n'
 
     event_payload = payload["event"]
-    if event_payload["exception"] and len(event_payload["exception"]["values"]) > 0:
+    if "exception" in event_payload and len(event_payload["exception"]["values"]) > 0:
         t, v = event_payload["exception"]["values"][0]["type"], event_payload["exception"]["values"][0]["value"]
         tg_msg += f'exception: \n<pre>{t}\n{v}</pre>\n\n'
 
-    if payload["url"]:
+    if "url" in payload:
         tg_msg += f'{payload["url"]}'
 
     await send_message_to_chat(tg_msg)
