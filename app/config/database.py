@@ -8,6 +8,7 @@ SQLALCHEMY_DATABASE_URL = settings.MYSQL_CONNECTION_STRING
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
+    pool_recycle=280
 )
 
 SessionLocal = sessionmaker(
