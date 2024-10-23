@@ -40,14 +40,16 @@ def create_waiting_session(
         email: str = Form(...),
         name: str = Form(...),
         db_session: Session = Depends(get_db)):
-    date_str = datetime.utcnow().strftime('%d.%m.%Y')
-    time_str = datetime.utcnow().strftime('%H-%M')
+    date_now = datetime.utcnow()
 
-    session_name = f"{name} - {date_str} {time_str}"
+    date_for_db = date_now.strftime('%d.%m.%Y %H:%M:%S')
+    date_for_session = date_now.strftime('%d.%m.%Y %H-%M')
+
+    session_name = f"{name} - {date_for_session}"
 
     session_input = SessionInput(
         count_photos=0,
-        datetime_str=date_str,
+        datetime_str=date_for_db,
         email=email,
         name=name,
         point=point,
