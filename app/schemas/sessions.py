@@ -33,6 +33,7 @@ class GetWaitingSessionsOutput(BaseModel):
     session: str = Field(min_length=1, max_length=120)
     disk_path: str = Field(min_length=1, max_length=120)
     datetime_str: str = Field(min_length=1, max_length=21)
+    name: str = Field(min_length=1, max_length=120)
     email: EmailStr
 
 

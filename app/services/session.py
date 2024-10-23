@@ -33,6 +33,7 @@ class SessionService:
                 disk_path=f"{session.point}/{session.session}",
                 email=session.email,
                 datetime_str=session.datetime_str,
+                name=session.name,
             ) for
             session in sessions
         ]
