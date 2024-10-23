@@ -34,5 +34,9 @@ class YandexDiskClient:
             logger.debug(f"Yandex disk api error: {exc}")
             raise YadiskException(exc)
 
+    def create_folder(self, path: str) -> bool:
+        self.client.mkdir(path)
+        return True
+
 
 yandex_disk_client = YandexDiskClient(settings.YANDEX_DISK_TOKEN)

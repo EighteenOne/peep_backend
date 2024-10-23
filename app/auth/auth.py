@@ -11,5 +11,5 @@ def check_api_key(api_key_header: str = Security(api_key_header)):
         return True
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Missing or invalid API key"
+        detail="Missing or invalid API access_key"
     )

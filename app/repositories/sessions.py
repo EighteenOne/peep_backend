@@ -30,6 +30,18 @@ class SessionRepository:
         sessions = self.db.query(PeepSession).filter_by(status=status).all()
         return sessions
 
+    def get_by_session_name(self, session_name: str) -> Type[PeepSession]:
+        session = self.db.query(PeepSession).filter_by(session=session_name).first()
+        return session
+
+    def get_by_point(self, point: str) -> List[Type[PeepSession]]:
+        sessions = self.db.query(PeepSession).filter_by(point=point).all()
+        return sessions
+
+    def get_by_point_with_status(self, point: str, status: int) -> List[Type[PeepSession]]:
+        sessions = self.db.query(PeepSession).filter_by(point=point, status=status).all()
+        return sessions
+
     def update(self, session: Type[PeepSession]):
         self.db.add(session)
         self.db.commit()

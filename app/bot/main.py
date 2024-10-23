@@ -1,5 +1,8 @@
+import io
 import logging
 
+import sentry_sdk
+from openpyxl import Workbook
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import (
     Application,
@@ -12,10 +15,10 @@ from telegram.ext import (
 
 from app.config.database import SessionLocal
 from app.config.settings import settings
-from app.repositories.points import PointRepository
+from app.repositories.sessions import SessionRepository
+from app.services.point import PointService
 from app.services.template import TemplateService
-
-import sentry_sdk
+from app.utils import hashing_password
 
 sentry_sdk.init(
     dsn=settings.SENTRY_DSN,
@@ -35,9 +38,14 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
-AUTH_LOGIN, AUTH_PASS, CHOOSING, TEMPLATE, STAT = range(5)
+AUTH_LOGIN, AUTH_PASS, CHOOSING, TEMPLATE, SUBJECT, SHOW_PASSWORD, CHANGE_PASSWORD, STAT = range(8)
 
-choosing_reply_keyboard = [["Шаблон", "Статистика"], ["Сменить точку"]]
+choosing_reply_keyboard = [
+    ["Шаблон письма", "Тема письма"],
+    ["Сменить пароль для входа в приложение"],
+    ["Статистика"],
+    ["Сменить точку"]
+]
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -78,11 +86,11 @@ async def auth_pass(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     passw = context.user_data["pass"]
 
     db = SessionLocal()
-    point_repository = PointRepository(db)
-    point = point_repository.get_by_point(point=point)
+    service = PointService(db)
+    point = service.get_by_point(point=point)
     db.close()
 
-    if point is not None and point.key == passw:
+    if point is not None and hashing_password.is_correct_password(point.access_key, passw):
         await update.message.reply_text(
             "Выбери, что нужно сделать",
             reply_markup=ReplyKeyboardMarkup(
@@ -98,7 +106,7 @@ async def auth_pass(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     return AUTH_LOGIN
 
 
-async def change_point(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def change_point_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     del context.user_data["point"]
     del context.user_data["pass"]
 
@@ -167,9 +175,152 @@ async def change_template(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     return CHOOSING
 
 
-async def stat_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def subject_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    point = context.user_data["point"]
+    db = SessionLocal()
+    template_service = TemplateService(db)
+    template = template_service.get_by_point(point)
+    db.close()
+
     await update.message.reply_text(
-        "Этот раздел еще в разработке",
+        "Вот краткая инструкция, как изменить тему письма:\n"
+        "Отдельным сообщением я пришлю текущий текст\n"
+        "В ответном сообщении пришли мне новую тему письма и я сразу сохраню его\n\n"
+        "А если хочешь отменить редактирование, отправь команду /cancel",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+
+    await update.message.reply_text(
+        "Сейчас письмо отправляется со следующей темой:",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+
+    await update.message.reply_text(
+        template.subject,
+        reply_markup=ReplyKeyboardRemove(),
+        disable_web_page_preview=True,
+    )
+
+    return SUBJECT
+
+
+async def change_subject(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    point = context.user_data["point"]
+
+    db = SessionLocal()
+    template_service = TemplateService(db)
+    template = template_service.get_by_point(point)
+    template.subject = update.message.text
+    template_service.update(template)
+    db.close()
+
+    await update.message.reply_text(
+        "Отлично, я сохранил изменения!",
+        reply_markup=ReplyKeyboardMarkup(
+            choosing_reply_keyboard, one_time_keyboard=True
+        ),
+    )
+
+    await update.message.reply_text(
+        "Выбери, что нужно сделать",
+        reply_markup=ReplyKeyboardMarkup(
+            choosing_reply_keyboard, one_time_keyboard=True
+        ),
+    )
+
+    return CHOOSING
+
+
+async def change_password_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    await update.message.reply_text(
+        "В ответном сообщении пришли мне новый пароль для доступа в мобильное приложение и я сразу сохраню его\n\n"
+        "Если хочешь отменить редактирование, отправь команду /cancel",
+        reply_markup=ReplyKeyboardRemove(),
+    )
+
+    return CHANGE_PASSWORD
+
+
+async def change_password(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    point = context.user_data["point"]
+
+    db = SessionLocal()
+    service = PointService(db)
+    point = service.get_by_point(point)
+    point.mobile_key = update.message.text
+    service.update(point)
+    db.close()
+
+    await update.message.reply_text(
+        "Отлично, я сохранил изменения!",
+        reply_markup=ReplyKeyboardMarkup(
+            choosing_reply_keyboard, one_time_keyboard=True
+        ),
+    )
+
+    await update.message.reply_text(
+        "Выбери, что нужно сделать",
+        reply_markup=ReplyKeyboardMarkup(
+            choosing_reply_keyboard, one_time_keyboard=True
+        ),
+    )
+
+    return CHOOSING
+
+
+async def show_password(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    point = context.user_data["point"]
+
+    db = SessionLocal()
+    service = PointService(db)
+    point = service.get_by_point(point)
+    db.close()
+
+    await update.message.reply_text(
+        point.mobile_key,
+        reply_markup=ReplyKeyboardMarkup(
+            choosing_reply_keyboard, one_time_keyboard=True
+        ),
+    )
+
+    await update.message.reply_text(
+        "Выбери, что нужно сделать",
+        reply_markup=ReplyKeyboardMarkup(
+            choosing_reply_keyboard, one_time_keyboard=True
+        ),
+    )
+
+    return CHOOSING
+
+
+async def stat_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    point = context.user_data["point"]
+
+    db = SessionLocal()
+    repo = SessionRepository(db)
+    sessions = repo.get_by_point(point)
+    db.close()
+
+    workbook = Workbook()
+    sheet = workbook.active
+
+    headers = ['Имя', 'Дата', 'Почта', 'Сессия']
+    sheet.append(headers)
+
+    for i in sessions:
+        row_data = [i.name, i.datetime_str, i.email, i.session]
+        sheet.append(row_data)
+
+    output = io.BytesIO()
+    workbook.save(output)
+    output.seek(0)
+
+    await update.message.reply_document(document=output, filename='data.xlsx')
+
+    output.close()
+
+    await update.message.reply_text(
+        "Выбери, что нужно сделать",
         reply_markup=ReplyKeyboardMarkup(
             choosing_reply_keyboard, one_time_keyboard=True
         ),
@@ -179,7 +330,6 @@ async def stat_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Cancels and ends the conversation."""
     await update.message.reply_text(
         "Галя, у нас отмена!", reply_markup=ReplyKeyboardMarkup(
             choosing_reply_keyboard, one_time_keyboard=True
@@ -205,11 +355,17 @@ def main() -> None:
                 MessageHandler(filters.TEXT & ~filters.COMMAND, auth_pass),
             ],
             CHOOSING: [
-                MessageHandler(filters.Regex("^Шаблон$"), template_choice),
+                MessageHandler(filters.Regex("^Шаблон письма$"), template_choice),
+                MessageHandler(filters.Regex("^Тема письма"), subject_choice),
                 MessageHandler(filters.Regex("^Статистика$"), stat_choice),
-                MessageHandler(filters.Regex("^Сменить точку$"), change_point),
+                # MessageHandler(filters.Regex("^Посмотреть пароль$"), show_password),
+                MessageHandler(filters.Regex("^Сменить пароль для входа в приложение$"), change_password_choice),
+                MessageHandler(filters.Regex("^Сменить точку$"), change_point_choice),
             ],
             TEMPLATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, change_template)],
+            SUBJECT: [MessageHandler(filters.TEXT & ~filters.COMMAND, change_subject)],
+            # SHOW_PASSWORD: [MessageHandler(filters.TEXT & ~filters.COMMAND, change_subject)],
+            CHANGE_PASSWORD: [MessageHandler(filters.TEXT & ~filters.COMMAND, change_password)],
             # STAT: [MessageHandler(filters.TEXT & ~filters.COMMAND, get_stat)],
         },
         fallbacks=[CommandHandler("cancel", cancel)],

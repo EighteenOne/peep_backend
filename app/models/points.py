@@ -11,4 +11,5 @@ class Point(Base):
     id = Column(String(36), default=lambda: str(uuid.uuid4()), primary_key=True)
 
     point = Column(String(128), index=True)
-    key = Column(String(130))
+    access_key = Column(String(130))
+    mobile_key = Column(String(130))

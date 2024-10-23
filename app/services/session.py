@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models.sessions import PeepSession
 from app.repositories.sessions import SessionRepository
-from app.schemas.sessions import SessionInput
+from app.schemas.sessions import SessionInput, GetWaitingSessionsOutput
 
 
 class SessionService:
@@ -22,8 +22,18 @@ class SessionService:
     def get_by_status(self, status: int):
         return self.repository.get_by_status(status)
 
+    def get_by_session_name(self, session_name: str):
+        return self.repository.get_by_session_name(session_name)
+
+    def get_waiting_by_point(self, point: str):
+        sessions = self.repository.get_by_point_with_status(point, 10)
+        return [
+            GetWaitingSessionsOutput(
+                session=session.session,
+                disk_path=f"{session.point}/{session.session}"
+            ) for
+            session in sessions
+        ]
+
     def update(self, session: Type[PeepSession]):
         return self.repository.update(session)
-
-    def get_path(self, session: Type[PeepSession]):
-        return

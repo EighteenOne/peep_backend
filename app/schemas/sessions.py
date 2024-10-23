@@ -1,13 +1,36 @@
-from pydantic import BaseModel, PositiveInt, Field, EmailStr, PastDate
+from pydantic import BaseModel, PositiveInt, Field, EmailStr, NonNegativeInt
 
 
 class SessionInput(BaseModel):
-    count_photos: PositiveInt
+    count_photos: NonNegativeInt
     datetime_str: str = Field(min_length=1, max_length=21)
     email: EmailStr
     name: str = Field(min_length=1, max_length=120)
     point: str = Field(min_length=1, max_length=120)
     session: str = Field(min_length=1, max_length=120)
+    status: int
+
+
+class CreateSessionInput(BaseModel):
+    datetime_str: str = Field(min_length=1, max_length=21)
+    email: EmailStr
+    name: str = Field(min_length=1, max_length=120)
+    point: str = Field(min_length=1, max_length=120)
+    session: str = Field(min_length=1, max_length=120)
+
+
+class CloseSessionInput(BaseModel):
+    session: str = Field(min_length=1, max_length=120)
+    count_photos: PositiveInt
+
+
+class GetWaitingSessionsInput(BaseModel):
+    point: str = Field(min_length=1, max_length=120)
+
+
+class GetWaitingSessionsOutput(BaseModel):
+    session: str = Field(min_length=1, max_length=120)
+    disk_path: str = Field(min_length=1, max_length=120)
 
 
 class SessionOutput(SessionInput):
