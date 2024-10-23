@@ -20,6 +20,7 @@ class CreateSessionInput(BaseModel):
 
 
 class CloseSessionInput(BaseModel):
+    point: str = Field(min_length=1, max_length=120)
     session: str = Field(min_length=1, max_length=120)
     count_photos: PositiveInt
 

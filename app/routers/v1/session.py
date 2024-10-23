@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from typing import List
 
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, Form, HTTPException
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db
@@ -81,6 +81,12 @@ def close_session(
     service = SessionService(db_session)
 
     session = service.get_by_session_name(data.session)
+
+    if not session:
+        raise HTTPException(status_code=400, detail="Session not found")
+
+    if session.point != data.point:
+        raise HTTPException(status_code=400, detail="Session exists at another point")
 
     session.count_photos = data.count_photos
     session.status = 0
