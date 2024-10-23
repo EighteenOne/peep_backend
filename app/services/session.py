@@ -30,7 +30,9 @@ class SessionService:
         return [
             GetWaitingSessionsOutput(
                 session=session.session,
-                disk_path=f"{session.point}/{session.session}"
+                disk_path=f"{session.point}/{session.session}",
+                email=session.email,
+                datetime_str=session.datetime_str,
             ) for
             session in sessions
         ]
