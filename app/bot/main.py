@@ -247,7 +247,7 @@ async def change_password(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     db = SessionLocal()
     service = PointService(db)
     point = service.get_by_point(point)
-    point.mobile_key = update.message.text
+    point.mobile_key = hashing_password.hash_password(update.message.text)
     service.update(point)
     db.close()
 
