@@ -29,12 +29,12 @@ def create_session(
 
 
 # need only for tilda webhook registration
-@router.post("/waiting/create")
-def create_waiting_session():
-    return "OK"
+# @router.post("/waiting/create")
+# def create_waiting_session():
+#     return "OK"
 
 # curl -X 'POST' 'http://0.0.0.0:8000/peep/api/v1/session/waiting/create' -H 'content-length: 304' -H 'content-type: application/x-www-form-urlencoded' -H 'referer: https://peep-picture.ru/peep1' -H 'accept: */*' -H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36' -H 'host: webhook.site' -d $'name=%D0%9C%D0%B8%D1%85%D0%B0%D0%B8%D0%BB%D0%A2%D0%B5%D1%81%D1%82&email=mikhail%40gmail.com&Checkbox=yes&mail_template=Peep&point=peep1&tranid=8005343%3A6768654971&formid=form803070350&formname=%D0%B0%D0%BD%D0%BA%D0%B5%D1%82%D0%B0+peep'
-@router.post("/waiting/create2")
+@router.post("/waiting/create")
 def create_waiting_session(
         point: str = Form(...),
         email: str = Form(...),
