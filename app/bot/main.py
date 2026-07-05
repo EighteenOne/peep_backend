@@ -13,6 +13,7 @@ from telegram.ext import (
     filters,
 )
 
+from telegram.request import HTTPXRequest
 from app.config.database import SessionLocal
 from app.config.settings import settings
 from app.repositories.sessions import SessionRepository
@@ -353,7 +354,7 @@ def main() -> None:
         read_timeout=20.0,
         proxy=PROXY,
     )
-    
+
     application = (
         Application.builder()
         .token(settings.BOT_TOKEN)
