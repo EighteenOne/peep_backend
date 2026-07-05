@@ -340,7 +340,27 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 
 def main() -> None:
-    application = Application.builder().token(settings.BOT_TOKEN).build()
+    PROXY = "socks5://127.0.0.1:1080"
+
+    request = HTTPXRequest(
+        connect_timeout=20.0,
+        read_timeout=20.0,
+        proxy=PROXY,
+    )
+
+    get_updates_request = HTTPXRequest(
+        connect_timeout=20.0,
+        read_timeout=20.0,
+        proxy=PROXY,
+    )
+    
+    application = (
+        Application.builder()
+        .token(settings.BOT_TOKEN)
+        .request(request)
+        .get_updates_request(get_updates_request)
+        .build()
+    )
 
     conv_handler = ConversationHandler(
         entry_points=[
